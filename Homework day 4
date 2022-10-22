@@ -1,0 +1,60 @@
+// SPDX-License-Identifier: UNLICENSED
+
+pragma solidity ^0.8.0;
+
+contract VolcanoCoin {
+
+    uint256 totalSupply = 10000;
+
+    address owner;
+
+    mapping(address => uint256) balances;
+    mapping(address => Payment[]) payments;
+
+      constructor() {
+      owner = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+      balances[owner] = 11000;
+      }
+
+    event supplyChange(uint256);
+    event transferLog(uint256, address indexed);
+
+    struct Payment {
+        uint256 transferToken;
+        address recipient;
+    }
+
+    modifier onlyOwner {
+       if (msg.sender == owner) {
+          _;
+        }
+    }
+
+    function getSupply() public view returns (uint) {
+        return totalSupply;
+    }
+
+    function increaseTotalSupply() public onlyOwner {
+       totalSupply += 1000;
+       emit supplyChange(totalSupply);
+    }
+    
+    function getUserBalance(address user) public view
+       returns (uint) {
+       return balances[user];
+       
+    }
+
+    function transfer(address recipient, uint256 transferToken) public {
+       balances[msg.sender] -= transferToken;
+       balances[recipient] += transferToken;
+
+       emit transferLog(transferToken, recipient);
+    }
+
+    function getPayment() public view returns (Payment[]memory) {
+       return payments[msg.sender];
+    }
+
+}  
+
